@@ -539,6 +539,7 @@ static int
 input_key_mode1(struct bufferevent *bev, key_code key)
 {
 	key_code	 onlykey;
+	static const char *fall_through_chars = "{}";
 
 	log_debug("%s: key in %llx", __func__, key);
 
@@ -558,7 +559,8 @@ input_key_mode1(struct bufferevent *bev, key_code key)
 	     onlykey == '^' ||
 	     (onlykey >= '2' && onlykey <= '8') ||
 	     (onlykey >= '@' && onlykey <= '~')))
-		return (input_key_vt10x(bev, key));
+	if (strchr(fall_through_chars, onlykey) == NULL)
+		  return (input_key_vt10x(bev, key));
 
 	return (-1);
 }
